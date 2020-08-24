@@ -52,7 +52,16 @@ INSTALLED_APPS = [
     'articles',
 ]
 
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+
+ACCOUNT_EMAIL_REQUIRED = False
+
 REST_USE_JWT = True
+JWT_AUTH = {
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+}
 
 SITE_ID = 1
 
