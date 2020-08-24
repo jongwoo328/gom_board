@@ -5,7 +5,7 @@ User = settings.AUTH_USER_MODEL
 
 class Article(models.Model):
   user = models.ForeignKey(User, on_delete=models.CASCADE)
-  parent_article = models.ForeignKey('self', on_delete=models.CASCADE)
+  parent_article = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
   title = models.CharField(max_length=30)
   content = models.TextField()
   created_at = models.DateTimeField(auto_now_add=True)
