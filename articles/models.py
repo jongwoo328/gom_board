@@ -5,7 +5,7 @@ User = settings.AUTH_USER_MODEL
 
 class Article(models.Model):
   user = models.ForeignKey(User, on_delete=models.CASCADE)
-  parrent_article = models.ForeignKey(Article, on_delete=models.CASCADE)
+  parent_article = models.ForeignKey('self', on_delete=models.CASCADE)
   title = models.CharField(max_length=30)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
@@ -14,7 +14,7 @@ class Article(models.Model):
 class Comment(models.Model):
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   article = models.ForeignKey(Article, on_delete=models.CASCADE)
-  parrent_comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+  parent_comment = models.ForeignKey('self', on_delete=models.CASCADE)
   content = models.TextField()
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)

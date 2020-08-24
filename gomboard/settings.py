@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     'accounts',
+    'articles',
 ]
 
 REST_USE_JWT = True
