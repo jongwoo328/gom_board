@@ -19,6 +19,8 @@ class UserDetailView(APIView):
         return get_object_or_404(User, pk=user_id)
 
     def delete(self, request, user_id):
-        user = self.get_object(user_id)
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if request.user.id == user_id:
+            user = self.get_object(user_id)
+            user.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_403_FORBIDDEN)
