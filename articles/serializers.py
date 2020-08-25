@@ -14,7 +14,11 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class ArticleSerializer(serializers.ModelSerializer):
   comments = CommentSerializer(many=True)
+  child_articles = serializers.SerializerMethodField()
   class Meta:
     model = Article
-    fields = ['id', 'title', 'content', 'parent_article', 'comments']
+    fields = ['id', 'title', 'content', 'parent_article', 'comments', 'child_articles']
 
+  def get_child_articles(self, instance):
+    from .serializers import ArticleSerializer
+    return ArticleSerializer(instance.child_articles, many=True).data
