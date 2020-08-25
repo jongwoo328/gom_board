@@ -3,8 +3,8 @@ from . import views
 
 app_name = 'articles'
 urlpatterns = [
-  path('', views.index, name='index'),
-  path('create/', views.article_create, name='article_create'),
-  path('<int: article_pk>/', views.detail, name='detail'),
-  # path('<int: article_pk>/create/', views.re_article_create, name='re_article_create')
+  path('', views.ArticleView.as_view()),
+  path('<int: article_pk>/', views.ArticleDetailView.as_view(), name='article_detail'),
+  path('<int: article_pk>/comment/', views.CommentView.as_view(), name='comment'),
+  path('<int: article_pk>/comment/<int: comment_pk>/', views.CommentDetailView.as_view(), name='comment_detail'),
 ]
