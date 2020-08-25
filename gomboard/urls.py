@@ -43,4 +43,5 @@ urlpatterns = [
     path('auth/signup/', include('rest_auth.registration.urls')),
   
     path('articles/', include('articles.urls')),
+    path('accounts/', include('accounts.urls')),
 ]
