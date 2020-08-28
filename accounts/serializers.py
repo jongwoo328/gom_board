@@ -11,3 +11,11 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'email'
         ]
+
+
+class EmailVerifySerializer(serializers.Serializer):
+    email = serializers.CharField()
+
+
+class UsernameVerifySerializer(serializers.Serializer):
+    username = serializers.CharField()
