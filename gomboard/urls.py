@@ -39,8 +39,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0)),
 
-    path('auth/', include('rest_auth.urls')),
-    path('auth/signup/', include('rest_auth.registration.urls')),
+    path('accounts/', include('rest_auth.urls')),
+    path('accounts/signup/', include('rest_auth.registration.urls')),
   
     path('articles/', include('articles.urls')),
     path('accounts/', include('accounts.urls')),
