@@ -108,11 +108,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = [
-    "http://jongwoo328.pythonanywhere.com",
-    "http://localhost:8080",
-    "http://localhost:8081"
-]
+# CORS_ORIGIN_WHITELIST = [
+#     "http://jongwoo328.pythonanywhere.com",
+#     "http://localhost:8080",
+#     "http://localhost:8081",
+# ]
+
+# FOR TEST
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 ROOT_URLCONF = 'gomboard.urls'
