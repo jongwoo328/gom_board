@@ -26,6 +26,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     return ArticleSerializer(instance.child_articles, many=True).data
 
 class ArticleCreateSerializer(serializers.ModelSerializer):
+  id = serializers.IntegerField(required=False)
   class Meta:
     model = Article
-    fields = ['title', 'content']
+    fields = ['id', 'title', 'content']
