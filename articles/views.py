@@ -7,16 +7,17 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
 from .models import Article, Comment
-from .serializers import ArticleSerializer, CommentSerializer
+from .serializers import ArticleSerializer, ArticleCreateSerializer, CommentSerializer
+
 
 class ArticleView(APIView):
 
-  @swagger_auto_schema(request_body=ArticleSerializer)
+  @swagger_auto_schema(request_body=ArticleCreateSerializer)
   def post(self, request):
     """
         # Article을 작성하는 요청
     """
-    serializer = ArticleSerializer(data=request.data)
+    serializer = ArticleCreateSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
       serializer.save(user=request.user)
       return Response(serializer.data, status=status.HTTP_201_CREATED)
