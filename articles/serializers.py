@@ -40,6 +40,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 
 class ArticleCreateSerializer(serializers.ModelSerializer):
+  id = serializers.IntegerField(required=False)
   class Meta:
     model = Article
-    fields = ['title', 'content']
+    fields = ['id', 'title', 'content']
