@@ -1,13 +1,17 @@
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import get_user_model
 
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+# from rest_framework.renderers import JSONRenderer
+# from rest_framework.parsers import JSONParser
 
 from drf_yasg.utils import swagger_auto_schema
 
 from .models import Article, Comment
-from .serializers import ArticleSerializer, ArticleCreateSerializer, CommentSerializer
+from .serializers import ArticleSerializer, ArticleCreateSerializer, CommentSerializer, CommentCreateSerializer
+from accounts.serializers import UserBookmarkSerializer
 
 
 class ArticleView(APIView):
@@ -33,10 +37,17 @@ class ArticleDetailView(APIView):
     article.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
-  def get(self, resquest, article_pk):
+  def get(self, request, article_pk):
     article = self.get_object(article_pk)
     serializer = ArticleSerializer(article)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    count = len(request.user.bookmarked_articles.values())
+    is_bookmarked = request.user.bookmarked_articles.filter(id=article_pk).exists()
+    res = {
+      'data': serializer.data, 
+      'bookmark_count': count,
+      'is_bookmarked': is_bookmarked
+      }
+    return Response(res, status=status.HTTP_200_OK)
   
   @swagger_auto_schema(request_body=ArticleSerializer)
   def patch(self, request, article_pk):
@@ -47,6 +58,25 @@ class ArticleDetailView(APIView):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class ArticleBookmarkView(APIView):
+
+  def get_object(self, article_pk):
+    return get_object_or_404(Article, pk=article_pk)
+
+  def post(self, request, article_pk):
+    user = request.user
+    article = self.get_object(article_pk)
+    if user.bookmarked_articles.filter(id=article_pk).exists():
+      print('북마크오프')
+      fake_count = -1
+      user.bookmarked_articles.remove(article)
+    else:
+      print('북마크온')
+      fake_count = 1
+      user.bookmarked_articles.add(article)
+    print(user.bookmarked_articles.filter(id=article_pk))
+    return Response(fake_count, status=status.HTTP_200_OK)
+
 class CommentView(APIView):
   
   def get(self, request, article_pk):
@@ -55,10 +85,10 @@ class CommentView(APIView):
     serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-  @swagger_auto_schema(request_body=CommentSerializer)
+  @swagger_auto_schema(request_body=CommentCreateSerializer)
   def post(self, request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
-    serializer = CommentSerializer(data=request.data)
+    serializer = CommentCreateSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
       serializer.save(user=request.user, article=article)
       return Response(serializer.data, status=status.HTTP_201_CREATED)

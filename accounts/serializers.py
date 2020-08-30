@@ -12,6 +12,15 @@ class UserSerializer(serializers.ModelSerializer):
             'email'
         ]
 
+class UserBookmarkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'bookmarked_articles',
+        ]
+
 
 class EmailVerifySerializer(serializers.Serializer):
     email = serializers.CharField()
