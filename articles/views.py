@@ -31,7 +31,7 @@ class ArticleView(APIView):
   def get(self, request):
     page = int(request.GET.get('page', 1))
     start_index = article_per_page*(page-1)
-    queryset = Article.objects.filter(parent_article=None)[start_index:start_index + article_per_page ]
+    queryset = reversed(Article.objects.filter(parent_article=None)[start_index:start_index + article_per_page ])
     total_article_count = Article.objects.count()
     serializer = ArticleSerializer(instance=queryset, many=True)
     response = {
