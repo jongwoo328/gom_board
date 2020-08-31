@@ -14,6 +14,8 @@ from .serializers import ArticleSerializer, ArticleCreateSerializer, CommentSeri
 from accounts.serializers import UserBookmarkSerializer
 
 
+article_per_page = 10
+
 class ArticleView(APIView):
 
   @swagger_auto_schema(request_body=ArticleCreateSerializer)
@@ -25,6 +27,18 @@ class ArticleView(APIView):
     if serializer.is_valid(raise_exception=True):
       serializer.save(user=request.user)
       return Response(serializer.data, status=status.HTTP_201_CREATED)
+  
+  def get(self, request):
+    page = request.GET.get('page', 1)
+    start_index = article_per_page*(page-1)
+    queryset = Article.objects.filter(parent_article=None)[start_index:start_index + article_per_page ]
+    total_article_count = Article.objects.count()
+    serializer = ArticleSerializer(instance=queryset, many=True)
+    response = {
+      'articles': serializer.data,
+      'totalArticleCount': total_article_count
+    }
+    return Response(response, status=status.HTTP_200_OK)
 
 
 class ArticleDetailView(APIView):
