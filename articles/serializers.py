@@ -40,7 +40,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 
 class ArticleCreateSerializer(serializers.ModelSerializer):
-  id = serializers.IntegerField(required=False)
+  id = serializers.IntegerField(required=False, read_only=True)
   class Meta:
     model = Article
-    fields = ['id', 'title', 'content']
+    fields = ['id', 'title', 'parent_article', 'content']
