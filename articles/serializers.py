@@ -21,6 +21,10 @@ class CommentCreateSerializer(serializers.ModelSerializer):
     model = Comment
     fields = ['content']
 
+# class CbyCoomentCreateSerializer(serializers.ModelSerializer):
+#   class Meta:
+#     model = Comment
+#     fields = ['content', 'parent_comment']
 
 class ArticleSerializer(serializers.ModelSerializer):
   comments = serializers.SerializerMethodField()

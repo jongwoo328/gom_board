@@ -67,21 +67,18 @@ class ArticleBookmarkView(APIView):
     user = request.user
     article = self.get_object(article_pk)
     if user.bookmarked_articles.filter(id=article_pk).exists():
-      print('북마크오프')
       fake_count = -1
       user.bookmarked_articles.remove(article)
     else:
-      print('북마크온')
       fake_count = 1
       user.bookmarked_articles.add(article)
-    print(user.bookmarked_articles.filter(id=article_pk))
     return Response(fake_count, status=status.HTTP_200_OK)
 
 class CommentView(APIView):
   
   def get(self, request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
-    comments = article.comment_set.all()
+    comments = article.comments.filter(parent_comment = None)
     serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -98,7 +95,16 @@ class CommentDetailView(APIView):
 
   def get_object(self, comment_pk):
     return get_object_or_404(Comment, pk=comment_pk)
-  
+
+  @swagger_auto_schema(request_body=CommentCreateSerializer)
+  def post(self, request, article_pk, comment_pk):
+    article = get_object_or_404(Article, pk=article_pk)
+    comment = self.get_object(comment_pk)
+    serializer = CommentCreateSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+      serializer.save(user=request.user, article=article, parent_comment=comment)
+      return Response(serializer.data, status=status.HTTP_201_CREATED)
+
   # don't use this function.
   @swagger_auto_schema(request_body=CommentSerializer)
   def patch(self, request, article_pk, comment_pk):
