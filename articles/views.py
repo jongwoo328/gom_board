@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import permission_classes
 # from rest_framework.renderers import JSONRenderer
 # from rest_framework.parsers import JSONParser
 
@@ -11,12 +14,15 @@ from drf_yasg.utils import swagger_auto_schema
 
 from .models import Article, Comment
 from .serializers import ArticleSerializer, ArticleCreateSerializer, CommentSerializer, CommentCreateSerializer
+from .permissions import ArticleViewPermission
 from accounts.serializers import UserBookmarkSerializer
 
 
 article_per_page = 10
 
 class ArticleView(APIView):
+
+  permission_classes =[ArticleViewPermission]
 
   @swagger_auto_schema(request_body=ArticleCreateSerializer)
   def post(self, request):
@@ -43,6 +49,8 @@ class ArticleView(APIView):
 
 class ArticleDetailView(APIView):
 
+  permission_classes = [ArticleViewPermission]
+
   def get_object(self, article_pk):
     return get_object_or_404(Article, pk=article_pk)
   
@@ -54,8 +62,13 @@ class ArticleDetailView(APIView):
   def get(self, request, article_pk):
     article = self.get_object(article_pk)
     serializer = ArticleSerializer(article)
-    count = len(request.user.bookmarked_articles.values())
-    is_bookmarked = request.user.bookmarked_articles.filter(id=article_pk).exists()
+
+    if request.user == AnonymousUser():
+      count = 0
+      is_bookmarked = False
+    else:
+      count = len(request.user.bookmarked_articles.values())
+      is_bookmarked = request.user.bookmarked_articles.filter(id=article_pk).exists()
     res = {
       'data': serializer.data, 
       'bookmark_count': count,
@@ -89,7 +102,7 @@ class ArticleBookmarkView(APIView):
     return Response(fake_count, status=status.HTTP_200_OK)
 
 class CommentView(APIView):
-  
+
   def get(self, request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     comments = article.comments.filter(parent_comment = None)
