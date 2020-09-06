@@ -49,10 +49,10 @@ class ArticleDetailView(APIView):
       }
     return Response(res, status=status.HTTP_200_OK)
   
-  @swagger_auto_schema(request_body=ArticleSerializer)
+  @swagger_auto_schema(request_body=ArticleCreateSerializer)
   def patch(self, request, article_pk):
     article = self.get_object(article_pk)
-    serializer = ArticleSerializer(instance=article, data=request.data)
+    serializer = ArticleCreateSerializer(instance=article, data=request.data)
     if serializer.is_valid(raise_exception=True):
       serializer.save(user=request.user)
     return Response(serializer.data, status=status.HTTP_200_OK)
